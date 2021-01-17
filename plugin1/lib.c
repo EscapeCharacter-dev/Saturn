@@ -10,3 +10,12 @@ request packet_recieved(request req) {
     printf("Request: %s\n", req);
     return req;
 }
+
+void new_connection(request ipAddr) {
+    printf("New connection emerging from %s!\n", ipAddr);
+}
+
+void error() {}
+void disconnect(request ipAddr) {
+    printf("Client %s disconnected!\n", ipAddr);
+}
