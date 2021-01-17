@@ -15,7 +15,7 @@ void new_connection(request ipAddr) {
     printf("New connection emerging from %s!\n", ipAddr);
 }
 
-void error() {}
+void error(int errno) {}
 void disconnect(request ipAddr) {
     printf("Client %s disconnected!\n", ipAddr);
 }
