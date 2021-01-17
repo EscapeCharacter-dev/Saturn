@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 static void pluginStart(pluginConfiguration *conf) {
     __label__ jump;
@@ -38,7 +39,7 @@ static void pluginStart(pluginConfiguration *conf) {
         clilen = sizeof(cliaddr);
         connfd = accept(listenfd, (struct sockaddr*)&cliaddr, &clilen);
         printf(HGRN"Recieved request.\n"reset);
-        if ((childpid = fork()) == 0) {
+        if (!(childpid = fork())) {
             printf(BHGRN"Created child thread to handle client requests.\n"reset);
             close(listenfd);
 
@@ -56,7 +57,10 @@ static void pluginStart(pluginConfiguration *conf) {
         }
         continue;
 jump:
-        kill(childpid, SIGKILL);
+        if (!childpid)
+            exit(0);
+        else
+            childpid = wait(0);
         close(connfd);
         listen(listenfd, conf->maxConnections);
         printf(HCYN"Server is up, waiting for connections...\n"reset);
