@@ -1,0 +1,8 @@
+{
+    "libPath": "lib.so",
+    "port": 80,
+    "startup": "start",
+    "packetRecieved": "packet_recieved",
+    "maxLineLength": 4096,
+    "maxConnections": 20
+}

@@ -1,0 +1,10 @@
+/usr/include/cjson/cJSON.h
+/usr/lib/x86_64-linux-gnu/pkgconfig/libcjson.pc
+/usr/lib/x86_64-linux-gnu/libcjson.so.1.7.14
+/usr/lib/x86_64-linux-gnu/libcjson.so.1
+/usr/lib/x86_64-linux-gnu/libcjson.so
+/usr/lib/x86_64-linux-gnu/libcjson.a
+/usr/lib/x86_64-linux-gnu/cmake/cJSON/cjson.cmake
+/usr/lib/x86_64-linux-gnu/cmake/cJSON/cjson-noconfig.cmake
+/usr/lib/x86_64-linux-gnu/cmake/cJSON/cJSONConfig.cmake
+/usr/lib/x86_64-linux-gnu/cmake/cJSON/cJSONConfigVersion.cmake

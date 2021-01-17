@@ -1,0 +1,8 @@
+{
+    "libPath": "./plugin1/lib.so",
+    "port": 3001,
+    "startup": "start",
+    "packetRecieved": "packet_recieved",
+    "maxLineLength": 4096,
+    "maxConnections": 20
+}
