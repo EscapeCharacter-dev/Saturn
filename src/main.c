@@ -1,13 +1,7 @@
 #include "conf.h"
 #include "color_codes.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <pthread.h>
-#include "plugin.h"
 
 int main(int argc, char **argv) {
     printf  (HCYN"Thank you for choosing Saturn for your daily server usage! Please support the project by contributing code!\n"reset
