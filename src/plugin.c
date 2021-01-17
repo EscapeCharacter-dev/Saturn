@@ -9,12 +9,16 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/wait.h>
+#include <arpa/inet.h>
 
 static void pluginStart(pluginConfiguration *conf) {
-    __label__ jump;
     void *library = dlopen(conf->libPath, RTLD_LAZY);
     void (*startup)(pluginConfiguration conf) = dlsym(library, conf->startup);
     request (*packetRecieved)(request req) = dlsym(library, conf->packetRecieved);
+    void (*newConnection)(request ipAddress) = dlsym(library, conf->newConnection);
+    void (*error)(int errno) = dlsym(library, conf->error);
+    void (*disconnect)(request ipAddress) = dlsym(library, conf->disconnect);
 
     int listenfd, connfd, n;
     pid_t childpid;
@@ -30,36 +34,37 @@ static void pluginStart(pluginConfiguration *conf) {
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(conf->port);
-    startup(*conf);
+    if (startup) startup(*conf);
     bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
     listen(listenfd, conf->maxConnections);
     printf(HCYN"Server is up, waiting for connections...\n"reset);
     while (1) {
         clilen = sizeof(cliaddr);
         connfd = accept(listenfd, (struct sockaddr*)&cliaddr, &clilen);
+        if (connfd == -1) {
+            if (error) error(0);
+            continue;
+        }
+
         printf(HGRN"Recieved request.\n"reset);
-        if ((childpid = fork()) == 0) {
-            printf(BHGRN"Created child thread to handle client requests.\n"reset);
+        if (!(childpid = fork())) {
+            if (newConnection) newConnection(inet_ntoa(cliaddr.sin_addr));
+            printf(BHGRN"Handling new client...\n"reset);
             close(listenfd);
 
             while ((n = recv(connfd, buf, conf->maxLineLength, 0)) > 0) {
-                printf(HGRN"Recieved request "BHCYN"%s"HGRN".\n"reset, buf);
+                printf(HGRN"Recieved request "BHCYN"%s"reset, buf);
                 request ret = packetRecieved(buf);
                 if (ret || *ret == '\0') send(connfd, ret, strlen(ret), 0);
-                memset(ret, '\0', strlen(ret)); /* for some reason, this is required. :/ */
             }
 
             if (n < 0) {
                 fprintf(stderr, "Error while reading.\n");
-                goto jump;
+                if (error) error(1);
             }
         }
-        continue;
-jump:
-        kill(childpid, SIGKILL);
+        disconnect(inet_ntoa(cliaddr.sin_addr));
         close(connfd);
-        listen(listenfd, conf->maxConnections);
-        printf(HCYN"Server is up, waiting for connections...\n"reset);
     }
     close(connfd);
     close(listenfd);
@@ -68,6 +73,7 @@ jump:
 }
 
 pthread_t *loadPlugin(pluginConfiguration configuration) {
+    printf("Loading plugin %s (version %d)...\n", configuration.displayName, configuration.version);
     pthread_t *t = malloc(4);
     pluginStart(&configuration);
     pthread_create(t, 0, (void *(*)(void*))&pluginStart, &configuration);

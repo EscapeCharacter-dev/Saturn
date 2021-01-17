@@ -4,10 +4,16 @@
 typedef struct {
     const char *libPath;
     int port;
-    const char *startup;
-    const char *packetRecieved;
     int maxLineLength;
     int maxConnections;
+    const char *displayName;
+    int version;
+
+    const char *startup;
+    const char *packetRecieved;
+    const char *newConnection;
+    const char *error;
+    const char *disconnect;
 } pluginConfiguration;
 
 typedef char * request;

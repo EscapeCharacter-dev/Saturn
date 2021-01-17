@@ -8,9 +8,6 @@
 #include <string.h>
 
 saturnConfiguration getConfig() {
-#ifndef NDEBUG
-    fprintf(stderr, "Reading conf file...\n");
-#endif
     saturnConfiguration config = {};
     char *content = getFileContents("conf.json");
     if (!content) {
@@ -40,9 +37,6 @@ saturnConfiguration getConfig() {
     config.ipAddress = name->valuestring;
     config.maxLineLength = maxLineLength->valueint;
     config.maxConnections = maxConnections->valueint;
-#ifndef NDEBUG
-    fprintf(stderr, "Completed reading.\n");
-#endif
     free(content);
     return config;
 }
@@ -75,16 +69,6 @@ pluginConfiguration getPluginConfiguration(const char *pluginPath) {
             fprintf(stderr, REDB"Invalid JSON!\n"reset);
             return null;
         }
-        cJSON *startup = cJSON_GetObjectItem(json, "startup");
-        if (!startup) {
-            fprintf(stderr, REDB"Invalid JSON!\n"reset);
-            return null;
-        }
-        cJSON *packetRecieved = cJSON_GetObjectItem(json, "packetRecieved");
-        if (!packetRecieved) {
-            fprintf(stderr, REDB"Invalid JSON!\n"reset);
-            return null;
-        }
         cJSON *maxLineLength = cJSON_GetObjectItem(json, "maxLineLength");
         if (!maxLineLength) {
             fprintf(stderr, REDB"Invalid JSON!\n"reset);
@@ -95,12 +79,39 @@ pluginConfiguration getPluginConfiguration(const char *pluginPath) {
             fprintf(stderr, REDB"Invalid JSON!\n"reset);
             return null;
         }
+        cJSON *version = cJSON_GetObjectItem(json, "version");
+        if (!version) {
+            fprintf(stderr, REDB"Invalid JSON!\n"reset);
+            return null;
+        }
+        cJSON *displayName = cJSON_GetObjectItem(json, "displayName");
+        if (!displayName) {
+            fprintf(stderr, REDB"Invalid JSON!\n"reset);
+            return null;
+        }
+
+
+        cJSON *startup = cJSON_GetObjectItem(json, "onStartup");
+        cJSON *packetRecieved = cJSON_GetObjectItem(json, "onPacketRecieved");
+        cJSON *newConnection = cJSON_GetObjectItem(json, "onNewConnection");
+        cJSON *error = cJSON_GetObjectItem(json, "onError");
+        cJSON *disconnect = cJSON_GetObjectItem(json, "onDisconnect");
+
+
         config.libPath = libPath->valuestring;
         config.port = port->valueint;
-        config.startup = startup->valuestring;
-        config.packetRecieved = packetRecieved->valuestring;
         config.maxLineLength = maxLineLength->valueint;
         config.maxConnections = maxConnections->valueint;
+        config.displayName = displayName->valuestring;
+        config.version = version->valueint;
+
+
+        config.startup          = startup           ? startup->valuestring          : 0;
+        config.packetRecieved   = packetRecieved    ? packetRecieved->valuestring   : 0;
+        config.newConnection    = newConnection     ? newConnection->valuestring    : 0;
+        config.error            = error             ? error->valuestring            : 0;
+        config.disconnect       = disconnect        ? disconnect->valuestring       : 0;
+
         closedir(d);
         free(confPath);
         free(content);
