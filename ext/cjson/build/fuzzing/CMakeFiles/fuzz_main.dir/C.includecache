@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/escapechar/saturn/ext/cjson/cJSON.h
+stddef.h
+-
+
+/home/escapechar/saturn/ext/cjson/fuzzing/cjson_read_fuzzer.c
+stdlib.h
+-
+stdint.h
+-
+string.h
+-
+../cJSON.h
+/home/escapechar/saturn/ext/cjson/cJSON.h
+
+/home/escapechar/saturn/ext/cjson/fuzzing/fuzz_main.c
+stdint.h
+-
+stdio.h
+-
+stdlib.h
+-
+
