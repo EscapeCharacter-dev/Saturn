@@ -11,7 +11,7 @@
 
 int main(int argc, char **argv) {
     printf  (HCYN"Thank you for choosing Saturn for your daily server usage! Please support the project by contributing code!\n"reset
-            "https://www.github.com/EscapeCharacter-dev/Saturn\n");
+            UCYN"https://www.github.com/EscapeCharacter-dev/Saturn\n"reset);
     printf(HCYN"NOTE: If you want to use Saturn as a HTTP server, "
             "you should use the official plugin httpsaturn. It's distributed by default.\n"reset);
     saturnConfiguration config = getConfig();
